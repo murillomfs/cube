@@ -13,6 +13,8 @@ export const useStore = create((set, get) => ({
   grid: GRID,
   total: TOTAL,
   activatedCount: 0,
+  autoRotate: true,
+  toggleRotation: () => set((s) => ({ autoRotate: !s.autoRotate })),
 
   activateCube: (id) =>
     set((state) => {

@@ -44,6 +44,8 @@ export default function HUD() {
   const total = useStore((s) => s.total)
   const activateRandom = useStore((s) => s.activateRandom)
   const reset = useStore((s) => s.reset)
+  const autoRotate = useStore((s) => s.autoRotate)
+  const toggleRotation = useStore((s) => s.toggleRotation)
   const pct = (activatedCount / total) * 100
 
   return (
@@ -59,6 +61,14 @@ export default function HUD() {
           onMouseLeave={(e) => (e.target.style.background = '#ffffff10')}
         >
           Activate Random
+        </button>
+        <button
+          style={styles.button}
+          onClick={toggleRotation}
+          onMouseEnter={(e) => (e.target.style.background = '#ffffff20')}
+          onMouseLeave={(e) => (e.target.style.background = '#ffffff10')}
+        >
+          {autoRotate ? 'Stop Rotation' : 'Start Rotation'}
         </button>
         <button
           style={styles.button}

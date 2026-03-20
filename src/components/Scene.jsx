@@ -1,7 +1,10 @@
 import { OrbitControls } from '@react-three/drei'
 import CubeGrid from './CubeGrid'
+import { useStore } from '../store'
 
 export default function Scene() {
+  const autoRotate = useStore((s) => s.autoRotate)
+
   return (
     <>
       <color attach="background" args={['#050508']} />
@@ -14,7 +17,7 @@ export default function Scene() {
         enableZoom={true}
         minDistance={5}
         maxDistance={16}
-        autoRotate
+        autoRotate={autoRotate}
         autoRotateSpeed={0.4}
         dampingFactor={0.05}
       />

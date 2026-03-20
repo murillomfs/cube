@@ -57,10 +57,16 @@ const vertexShader = /* glsl */ `
   attribute vec3 aRandom;
 
   varying float vActivation;
+  varying float vEdge;
 
   void main() {
     float activation = uActivations[int(aCubeId)];
     vActivation = activation;
+
+    // edge proximity: how close this point is to a cube edge/corner
+    // points near edges have 2+ coords close to ±0.45
+    vec3 edgeProx = smoothstep(0.55, 1.0, abs(position) / 0.45);
+    vEdge = max(edgeProx.x * edgeProx.y, max(edgeProx.y * edgeProx.z, edgeProx.x * edgeProx.z));
 
     vec3 localPos = position;
 
@@ -76,7 +82,8 @@ const vertexShader = /* glsl */ `
     vec4 mvPosition = modelViewMatrix * vec4(worldPos, 1.0);
 
     float baseSize = mix(1.2, 2.0, activation);
-    gl_PointSize = baseSize * (55.0 / -mvPosition.z);
+    float edgeBoost = 1.0 + vEdge * 0.4;
+    gl_PointSize = baseSize * edgeBoost * (55.0 / -mvPosition.z);
 
     gl_Position = projectionMatrix * mvPosition;
   }
@@ -84,6 +91,7 @@ const vertexShader = /* glsl */ `
 
 const fragmentShader = /* glsl */ `
   varying float vActivation;
+  varying float vEdge;
 
   void main() {
     float dist = length(gl_PointCoord - 0.5);
@@ -92,13 +100,17 @@ const fragmentShader = /* glsl */ `
     float sharp = 1.0 - smoothstep(0.3, 0.4, dist);
 
     vec3 offColor = vec3(0.3, 0.4, 0.6);
+    vec3 edgeColor = vec3(0.42, 0.52, 0.72);
     vec3 onColor = vec3(1.0, 0.55, 0.18);
-    vec3 color = mix(offColor, onColor, vActivation);
+
+    vec3 baseOff = mix(offColor, edgeColor, vEdge);
+    vec3 color = mix(baseOff, onColor, vActivation);
 
     float brightness = mix(0.45, 1.3, vActivation);
+    brightness += vEdge * (1.0 - vActivation) * 0.25;
     color *= brightness;
 
-    float alpha = sharp * mix(0.6, 1.0, vActivation);
+    float alpha = sharp * mix(0.6 + vEdge * 0.2, 1.0, vActivation);
 
     gl_FragColor = vec4(color, alpha);
   }
