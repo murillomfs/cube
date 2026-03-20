@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useStore } from '../store'
 
-const POINTS_PER_CUBE = 200
+const POINTS_PER_CUBE = 120
 const CUBE_SIZE = 0.9
 
 function generateCubeSurfacePoints(count) {
@@ -81,9 +81,9 @@ const vertexShader = /* glsl */ `
 
     vec4 mvPosition = modelViewMatrix * vec4(worldPos, 1.0);
 
-    float baseSize = mix(1.2, 2.0, activation);
-    float edgeBoost = 1.0 + vEdge * 0.4;
-    gl_PointSize = baseSize * edgeBoost * (55.0 / -mvPosition.z);
+    float baseSize = mix(1.0, 1.6, activation);
+    float edgeBoost = 1.0 + vEdge * 0.3;
+    gl_PointSize = baseSize * edgeBoost * (45.0 / -mvPosition.z);
 
     gl_Position = projectionMatrix * mvPosition;
   }
@@ -97,7 +97,7 @@ const fragmentShader = /* glsl */ `
     float dist = length(gl_PointCoord - 0.5);
     if (dist > 0.4) discard;
 
-    float sharp = 1.0 - smoothstep(0.3, 0.4, dist);
+    float sharp = 1.0 - smoothstep(0.39, 0.4, dist);
 
     vec3 offColor = vec3(0.3, 0.4, 0.6);
     vec3 edgeColor = vec3(0.42, 0.52, 0.72);
