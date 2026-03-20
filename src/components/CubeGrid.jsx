@@ -1,6 +1,7 @@
 import { useRef, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import MiniCube from './MiniCube'
+import PointCloud from './PointCloud'
 import { useStore } from '../store'
 
 export default function CubeGrid() {
@@ -41,6 +42,7 @@ export default function CubeGrid() {
 
   return (
     <group ref={groupRef}>
+      <PointCloud cubePositions={positions} />
       {positions.map(({ id, position }) => (
         <MiniCube key={id} id={id} position={position} />
       ))}
